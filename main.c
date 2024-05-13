@@ -28,6 +28,7 @@ void listDirectories(const char *path) {
 
 int main() {
     char path[256];
+    char selectedDir[256];
     int choice;
 
     // 使用预定义的路径
@@ -64,6 +65,7 @@ int main() {
         if (entry->d_type == DT_DIR && entry->d_name[0] != '.') {
             selected++;
             if (selected == choice) {
+                strcpy(selectedDir, entry->d_name);
                 chdir(entry->d_name);
                 printf("Changed directory to: %s\n", entry->d_name);
                 break;
@@ -72,12 +74,12 @@ int main() {
     }
     closedir(dir);
 
-    // 执行code ./
-    char *cmd[] = {"code", "./", NULL};
-    if (execvp(cmd[0], cmd) == -1) {
-        perror("execvp");
-        exit(EXIT_FAILURE);
-    }
+    // 拼接路径
+    char cmd[1024];  // 增加缓冲区大小
+    snprintf(cmd, sizeof(cmd), "code %s/%s", path, selectedDir);
+
+    // 执行code命令
+    system(cmd);
 
     return 0;
 }
