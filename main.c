@@ -3,10 +3,11 @@
 #include <dirent.h>
 #include <unistd.h>
 #include <string.h>
+#include <sys/ioctl.h>
 
 #define SCAN_PATH "/home/gloridust/Documents/Github"
 
-void listDirectories(const char *path) {
+void listDirectories(const char *path, int rows) {
     DIR *dir;
     struct dirent *entry;
 
@@ -20,7 +21,9 @@ void listDirectories(const char *path) {
     printf("Directories in %s:\n", path);
     while ((entry = readdir(dir)) != NULL) {
         if (entry->d_type == DT_DIR && entry->d_name[0] != '.') {
-            printf("%d. %s\n", count++, entry->d_name);
+            printf("%d. %s\t", count++, entry->d_name);
+            if (count % rows == 1)
+                printf("\n");
         }
     }
     closedir(dir);
@@ -34,11 +37,16 @@ int main() {
     // 使用预定义的路径
     strcpy(path, SCAN_PATH);
 
+    // 获取命令行窗口大小
+    struct winsize w;
+    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+    int rows = w.ws_col / 20; // 每个文件夹名称占用约20个字符的宽度
+
     // 列出目录
-    listDirectories(path);
+    listDirectories(path, rows);
 
     // 用户选择目录
-    printf("Enter the directory number to enter: ");
+    printf("\n>> Enter the directory number to enter: ");
     scanf("%d", &choice);
 
     // 执行cd操作
