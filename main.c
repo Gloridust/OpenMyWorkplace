@@ -73,7 +73,11 @@ int main() {
     closedir(dir);
 
     // 执行code ./
-    system("code ./");
+    char *cmd[] = {"code", "./", NULL};
+    if (execvp(cmd[0], cmd) == -1) {
+        perror("execvp");
+        exit(EXIT_FAILURE);
+    }
 
     return 0;
 }
