@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <dirent.h>
 #include <unistd.h>
+#include <string.h>
+
+#define SCAN_PATH "/home/gloridust/Documents/Github"
 
 void listDirectories(const char *path) {
     DIR *dir;
@@ -27,9 +30,8 @@ int main() {
     char path[256];
     int choice;
 
-    // 输入要扫描的路径
-    printf("Enter the path to scan: ");
-    scanf("%s", path);
+    // 使用预定义的路径
+    strcpy(path, SCAN_PATH);
 
     // 列出目录
     listDirectories(path);
